@@ -1,0 +1,16 @@
+---
+
+  - hosts: server
+    tasks:
+
+    - name: Add user remote
+      user:
+        name=remote
+        home=/export/home/remote
+        password=remote
+
+    - name: Add SSH public key to user remote
+      authorized_key:
+        user=remote
+        key="{{ lookup('file', "../files/workstation.pub") }}"
+     
