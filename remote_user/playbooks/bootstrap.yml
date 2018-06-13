@@ -1,6 +1,12 @@
 ---
 
   - hosts: server
+    vars:
+      download_url: http://jre.us.oracle.com/java/re/jdk/1.8.0_181/promoted/fcs/b08/bundles/linux-amd64/jdk-8u181-linux-amd64.tar.gz
+      download_folder: /tmp
+      java_name: "{{download_folder}}/jdk1.8.0_181"
+      java_archive: "{{download_folder}}/jdk-8u181-linux-amd64.tar.gz"
+
     tasks:
 
     - name: Add user remote
@@ -18,4 +24,27 @@
       lineinfile:
         path: /export/home/remote/.bashrc
         line: export http_proxy=http://www-proxy.us.oracle.com:80
+
+    - name: Execute .bashrc on remote server
+      command:
+        sh /export/home/remote/.bashrc
+
+    - name: Download java
+      command: "wget -q -O {{java_archive}} --no-check-certificate {{download_url}} creates={{java_archive}}"
+
+    - name: Unpack archive
+      command: "tar -zxf {{java_archive}} -C {{download_folder}} creates={{java_name}}"
+
+    - name: Fix Ownership
+      file: state=directory path={{java_name}} owner=remote group=remote recurse=yes
+
+    - name: Clean up
+      file: state=absent path={{java_archive}}
+        
+
+       
+
+      
+      
+
      
