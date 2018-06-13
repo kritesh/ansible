@@ -13,4 +13,9 @@
       authorized_key:
         user=remote
         key="{{ lookup('file', "../files/workstation.pub") }}"
+
+    - name: Set the proxies in remote server
+      lineinfile:
+        path: /export/home/remote/.bashrc
+        line: export http_proxy=http://www-proxy.us.oracle.com:80
      
